@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Dashboard } from "./Layouts/Dashboard";
+import { Dashboard } from "./Layouts/Dashboard/Dashboard";
 import { TaskLog } from "./Layouts/Tasklog";
 
 function AppRoutes() {
