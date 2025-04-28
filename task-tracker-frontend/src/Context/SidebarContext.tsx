@@ -43,9 +43,11 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode}> = ({
         };
         
         handleResize();
+        //Adding the event listener to the window object to listen for resize events.
         window.addEventListener("resize",handleResize);
 
         return () => {
+            //Cleaning up the event listener when the component unmounts.
             window.removeEventListener("resize",handleResize);
         }
     },[]);
@@ -56,7 +58,7 @@ export const SidebarProvider: React.FC<{ children: React.ReactNode}> = ({
     }
 
     const toggleMobileSidebar = () => {
-        setIsMobileOpen((prev) => prev);
+        setIsMobileOpen((prev) => !prev);
     }
     // whatever is inside value is what is shared to its children.
     //The provider wraps other components and supplies the context value to them.
