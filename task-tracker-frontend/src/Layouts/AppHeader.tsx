@@ -77,7 +77,6 @@ const AppHeader: React.FC = () => {
                     />
                   </svg>
                 )}
-                {/* Cross Icon */}
               </button>
     
               <Link to="/" className="lg:hidden">
@@ -160,11 +159,12 @@ const AppHeader: React.FC = () => {
                 <NotificationDropdown />
                 {/* <!-- Notification Menu Area --> */}
               </div>
-              {/* <!-- User Area --> */}
-              <UserDropdown />
+              {/* <!-- User Area -->
+              <UserDropdown /> */}
             </div>
           </div>
         </header>
-      );
-    
+      );   
 }
+
+export default AppHeader;
