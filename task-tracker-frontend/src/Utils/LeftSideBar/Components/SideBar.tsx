@@ -19,7 +19,8 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     name: "Dashboard",
-    icon: <GridIcon/>
+    icon: <GridIcon/>,
+    path: "/"
   },
   {
     name: "Task Log",

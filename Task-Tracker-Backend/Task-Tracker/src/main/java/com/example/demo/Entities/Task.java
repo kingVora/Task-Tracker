@@ -1,9 +1,6 @@
 package com.example.demo.Entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -11,8 +8,9 @@ import lombok.Data;
 @Data
 public class Task {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String taskId;
+    private int taskId;
 
     @Column(name = "title")
     private String title;
@@ -20,13 +18,13 @@ public class Task {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "assigned_date")
+    private String assignedDate;
+
+    @Column(name = "due_date")
+    private String dueDate;
+
     @Column(name = "status")
     private String status;
-
-    @Column(name = "date")
-    private String date;
-
-    @Column(name = "tags")
-    private String tags;
 
 }

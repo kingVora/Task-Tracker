@@ -3,7 +3,7 @@ import { SidebarProvider, useSidebar } from "../Context/SidebarContext";
 import { Sidebar } from "../Utils/LeftSideBar/Components/SideBar";
 import BackDrop from "./BackDrop";
 import AppHeader from "./AppHeader";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
 const LayoutContent: React.FC = () => {
     const { isExpanded, isHovered, isMobileOpen } = useSidebar();
