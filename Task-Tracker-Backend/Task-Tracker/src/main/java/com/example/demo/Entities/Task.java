@@ -10,7 +10,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int taskId;
+    private Integer taskId;
 
     @Column(name = "title")
     private String title;

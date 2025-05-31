@@ -2,14 +2,12 @@ package com.example.demo.Controller;
 
 import com.example.demo.Entities.Task;
 import com.example.demo.Service.TaskService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@CrossOrigin("http://localhost:5173")
 public class TaskController {
 
     private final TaskService service;
@@ -36,5 +34,24 @@ public class TaskController {
     @GetMapping("/dueTasksCount")
     public long getDueTasksCount(){
         return service.fetchCountOfDueTasks();
+    }
+
+    @GetMapping("/overdueTasksCount")
+    public long getOverdueTasksCount(){
+        return service.fetchCountOfOverdueTasks();
+    }
+
+    @PatchMapping("/completedTask/{id}")
+    public String markTaskAsCompleted(@PathVariable("id") Integer taskId) throws Exception {
+        service.markTaskAsCompleted(taskId);
+        return "Updated!";
+    }
+
+    @PutMapping("/editTask/{id}")
+    public void editTask(@PathVariable("id") Integer taskId, @RequestBody Task task) throws Exception{
+        System.out.println("Inside editTask");
+        System.out.println(task.getDescription());
+        Optional<Task> task1 = service.editTask(taskId,task);
+//        System.out.println(task1.get().getDescription());
     }
 }

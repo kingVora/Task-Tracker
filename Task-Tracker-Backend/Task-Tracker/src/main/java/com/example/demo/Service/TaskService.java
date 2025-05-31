@@ -5,6 +5,7 @@ import com.example.demo.Entities.Task;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -30,5 +31,38 @@ public class TaskService {
 
     public long fetchCountOfDueTasks() {
         return (repository.findByStatus("due")).size();
+    }
+
+    public long fetchCountOfOverdueTasks() {
+        return (repository.findByStatus("overdue")).size();
+    }
+
+    public void markTaskAsCompleted(Integer taskId) throws Exception {
+        Optional<Task> task = repository.findById(taskId);
+        if(task.isEmpty())
+            throw new Exception("Task does not exist");
+        Task fetchedTask = task.get();
+        fetchedTask.setStatus("completed");
+        repository.save(fetchedTask);
+    }
+
+    public Optional<Task> editTask(Integer taskId, Task task) throws Exception {
+        System.out.println("Reached");
+        System.out.println(taskId);
+        repository.findById(taskId)
+                .map(existingTask -> {
+                    existingTask.setTitle(task.getTitle());
+                    existingTask.setDescription(task.getDescription());
+                    existingTask.setDueDate(task.getDueDate());
+                    existingTask.setAssignedDate(task.getAssignedDate());
+                    existingTask.setPriority(task.getPriority());
+                    existingTask.setStatus(task.getStatus());
+                    System.out.println("Going to save");
+                    System.out.println(existingTask.getDescription());
+                    repository.save(existingTask);
+                    System.out.println("Have saved");
+                    return existingTask;
+                }).orElseThrow(() -> new Exception("Task does not exist!"));
+        return Optional.empty();
     }
 }
