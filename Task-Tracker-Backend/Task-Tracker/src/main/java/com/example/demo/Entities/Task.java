@@ -30,4 +30,16 @@ public class Task {
     @Column(name = "priority")
     private String priority;
 
+    public Task(){
+        
+    }
+
+    public Task(String title, String description, String assignedDate, String dueDate, String status, String priority) {
+        this.title = title;
+        this.description = description;
+        this.assignedDate = assignedDate;
+        this.dueDate = dueDate;
+        this.status = status;
+        this.priority = priority;
+    }
 }

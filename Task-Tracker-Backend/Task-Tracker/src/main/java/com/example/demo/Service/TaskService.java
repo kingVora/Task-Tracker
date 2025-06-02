@@ -65,4 +65,8 @@ public class TaskService {
                 }).orElseThrow(() -> new Exception("Task does not exist!"));
         return Optional.empty();
     }
+
+    public void addTask(Task task) {
+        repository.save(new Task(task.getTitle(),task.getDescription(),task.getAssignedDate(),task.getDueDate(),task.getStatus(),task.getPriority()));
+    }
 }

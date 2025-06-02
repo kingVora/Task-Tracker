@@ -52,6 +52,10 @@ public class TaskController {
         System.out.println("Inside editTask");
         System.out.println(task.getDescription());
         Optional<Task> task1 = service.editTask(taskId,task);
-//        System.out.println(task1.get().getDescription());
+    }
+
+    @PostMapping("/addTask")
+    public void addTask(@RequestBody Task task){
+        service.addTask(task);
     }
 }
