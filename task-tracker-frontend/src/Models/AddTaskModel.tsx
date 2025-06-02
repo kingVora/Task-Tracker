@@ -1,5 +1,4 @@
-class TaskModel {
-    taskId: number;
+class AddTaskModel {
     title: string;
     description: string;
     assignedDate: Date;
@@ -8,7 +7,6 @@ class TaskModel {
     priority: 'low' | 'medium' | 'high';
 
     constructor(
-        taskId: number,
         title: string,
         description: string,
         assignedDate: Date,
@@ -16,7 +14,6 @@ class TaskModel {
         status: 'completed' | 'due' | 'overdue',
         priority: 'low' | 'medium' | 'high',
     ) {
-        this.taskId = taskId;
         this.title = title;
         this.description = description;
         this.assignedDate = assignedDate;
@@ -26,4 +23,4 @@ class TaskModel {
     }
 }
 
-export default TaskModel;
+export default AddTaskModel;

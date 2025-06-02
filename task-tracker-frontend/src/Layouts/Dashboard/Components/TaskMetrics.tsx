@@ -8,7 +8,7 @@ import {
 import Badge from "../../../Utils/Badge/Badge";
 import axios from "axios";
   
-  export default function TaskMetrics() {
+  export default function TaskMetrics( {updateTrigger} : {updateTrigger: boolean}) {
 
     const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -29,7 +29,7 @@ import axios from "axios";
       }
 
       fetchTasks();
-    },[]);
+    },[updateTrigger]);
 
     useEffect(() =>{
       const fetchCompletedTasks = async () => {
@@ -41,7 +41,7 @@ import axios from "axios";
         }
       }
       fetchCompletedTasks();
-    },[]);
+    },[updateTrigger]);
 
     useEffect(() => {
       const fetchDueTasks = async () => {
@@ -53,7 +53,7 @@ import axios from "axios";
         }
       }
       fetchDueTasks();
-    },[]);
+    },[updateTrigger]);
 
     useEffect(() => {
       const fetchOverdueTasks = async () => {
@@ -65,7 +65,7 @@ import axios from "axios";
         }
       }
       fetchOverdueTasks();
-    },[]);
+    },[updateTrigger]);
 
     return (
       <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-4 md:gap-6">
@@ -144,7 +144,7 @@ import axios from "axios";
                 Overdue
               </span>
               <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-                {completedTasks}
+                {overdueTasks}
               </h4>
             </div>
   

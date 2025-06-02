@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import TaskModel from "../../../Models/TaskModel";
+import AddTaskModel from "../../../Models/AddTaskModel";
 
 
 interface EditModalProps {
-    task: TaskModel;
     onClose: () => void;
-    onSave: (updatedTask: TaskModel) => void;
 }
 
-export default function EditModal({task, onClose, onSave}: EditModalProps) {
+type TaskModalProps = 
+  | (EditModalProps & { mode: 'edit'; task: TaskModel; onSave: (task: TaskModel) => void; })
+  | (EditModalProps & { mode: 'add'; task: null;onSave: (task: AddTaskModel) => void; });
+
+export default function TaskModal({mode, task, onClose, onSave}: TaskModalProps) {
     const [title,setTitle] = useState('');
     const [description,setDescription] = useState('');
     const [dueDate,setDueDate] = useState('');
@@ -29,18 +32,28 @@ export default function EditModal({task, onClose, onSave}: EditModalProps) {
     const handleSave = async () => {
         console.log("Saving task:", task);
         console.log(description);
-        const updatedTask = new TaskModel(
-            task.taskId,
-            title || task.title,
-            description,
-            new Date(assignedDate || new Date(task.assignedDate).toISOString().split('T')[0]),
-            new Date(dueDate || new Date(task.dueDate).toISOString().split('T')[0]),
-            task.status,
-            priority || task.priority
+        if(mode === 'edit'){
+          const updatedTask = new TaskModel(
+              task.taskId,
+              title || task.title,
+              description || task.description,
+              new Date(assignedDate || new Date(task.assignedDate).toISOString().split('T')[0]),
+              new Date(dueDate || new Date(task.dueDate).toISOString().split('T')[0]),
+              task.status,
+              priority || task.priority
+          );
+          onSave(updatedTask);
+      } else if (mode === 'add'){
+        const newTask = new AddTaskModel(
+          title,
+          description,
+          new Date(assignedDate),
+          new Date(dueDate),
+          'due', // Default status for new tasks
+          priority
         );
-        console.log(description);
-        console.log("Updated task:", updatedTask);
-        onSave(updatedTask);
+        onSave(newTask);
+      }
         onClose();
     }
     return (
