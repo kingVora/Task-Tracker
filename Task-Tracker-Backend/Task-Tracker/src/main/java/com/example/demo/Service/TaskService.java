@@ -2,6 +2,9 @@ package com.example.demo.Service;
 
 import com.example.demo.DAO.TaskRepository;
 import com.example.demo.Entities.Task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,11 @@ public class TaskService {
 
     public List<Task> fetchTasks(){
         return repository.findAll();
+    }
+
+    public Page<Task> fetchTasksBasedOnStatus(int page, int size){
+        Pageable pageable = PageRequest.of(page,size);
+        return repository.findByStatusIn(List.of("due","overdue"),pageable);
     }
 
     public long fetchCount() {
@@ -68,5 +76,9 @@ public class TaskService {
 
     public void addTask(Task task) {
         repository.save(new Task(task.getTitle(),task.getDescription(),task.getAssignedDate(),task.getDueDate(),task.getStatus(),task.getPriority()));
+    }
+
+    public void deleteTask(int taskId) {
+        repository.deleteById(taskId);
     }
 }

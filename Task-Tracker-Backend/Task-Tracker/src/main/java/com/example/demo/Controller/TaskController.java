@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.Entities.Task;
 import com.example.demo.Service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -23,7 +24,7 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public List<Task> getTasks(){
+    public Page<Task> getTasks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size){
         List<Task> fetchedTasks = service.fetchTasks();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         fetchedTasks.forEach(task -> {
@@ -49,7 +50,7 @@ public class TaskController {
                 throw new RuntimeException(e.getMessage());
             }
         });
-        return fetchedTasks;
+        return service.fetchTasksBasedOnStatus(page, size);
     }
 
     @GetMapping("/totaltasks")
@@ -88,5 +89,10 @@ public class TaskController {
     @PostMapping("/addTask")
     public void addTask(@RequestBody Task task){
         service.addTask(task);
+    }
+
+    @DeleteMapping("/deleteTask/{taskId}")
+    public void deleteTask(@PathVariable int taskId){
+        service.deleteTask(taskId);
     }
 }
