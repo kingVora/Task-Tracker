@@ -5,6 +5,7 @@ import { ChevronDown, Edit } from 'lucide-react';
 import { Pagination } from "../../../Utils/Pagination";
 import TaskModal from "./TaskModal";
 import AddTaskModel from "../../../Models/AddTaskModel";
+import ConfirmationModal from "./ConfirmationModal";
 
 export default function Tasks({onUpdate} : {onUpdate: () => void}) {
 
@@ -18,17 +19,19 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
     const [totalPages, setTotalPages] = useState(0);
     const [tasksCountForPagination, setTasksCountForPagination] = useState(0);
     const [editingTask, setEditingTask] = useState<TaskModel | null>(null);
+    const [deleteTask, setDeleteTask] = useState<TaskModel | null>(null);
     const [addingTask, setAddingTask] = useState(false);
 
     useEffect(() => {
         const fetchTasks = async() => {
             try{
                 const response = await axios.get(`${baseURL}/tasks?page=${currentPage-1}&size=${tasksPerPage}`);
-                const dueTasks = response.data.filter((task: TaskModel) => task.status === 'due' || task.status === 'overdue');
+                console.log("Tasks fetched:", response.data.content);
+                const dueTasks = response.data.content;
                 const sorted = dueTasks.sort((a: TaskModel,b: TaskModel) => priorityValue(a.priority) - priorityValue(b.priority));
                 setTasks(sorted);
-                setTasksCountForPagination(sorted.length);
-                setTotalPages(Math.ceil(sorted.length / tasksPerPage));
+                setTasksCountForPagination(response.data.totalElements);
+                setTotalPages(response.data.totalPages);
             }   
             catch(error) {
                 console.error("Error fetching tasks:", error);
@@ -76,6 +79,18 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
         }
     }
 
+    const handleDeleteTask = async (taskId: number) => {
+        try {
+            await axios.delete(`${baseURL}/deleteTask/${taskId}`);
+            setTasks(prev => prev.filter(t => t.taskId !== taskId));
+            setDeleteTask(null);
+            onUpdate();
+        }
+        catch (error) {
+            console.error("Error deleting task:",error);
+        }
+    }
+
     const handleAddTask = async (task: AddTaskModel) => {
         try {
             await axios.post(`${baseURL}/addTask`,task);
@@ -94,6 +109,9 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
 
     return (
         <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                Stay on Track! Here Are Your Due and Overdue Tasks
+            </h2>
             <div className="flex items-center justify-between mt-3">
                 {tasksCountForPagination > 0 && (
                     <div className="text-white">
@@ -124,10 +142,49 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
                       <button className="text-blue-600 hover:underline" onClick={() => setEditingTask(task)}>
                         <Edit size={18} />
                       </button>
+                      <button
+                            className="text-red-600 hover:text-red-800"
+                            onClick={() => setDeleteTask(task)}
+                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                        </svg>           
+                    </button>
                     </div>
                   </div>
                   {expandedTask === task.taskId && (
-                    <p className="text-gray-600 mt-2">{task.description}</p>
+                    <div className="flex justify-between items-center mt-2">
+                        {/* Task Description */}
+                        <p className="text-gray-600">{task.description}</p>
+                
+                        {/* Priority and Status */}
+                        <div className="flex items-center gap-4">
+                            {/* Priority Badge */}
+                            <span
+                                className={`px-2 py-1 text-sm font-medium rounded ${
+                                    task.priority === 'high'
+                                        ? 'bg-red-500 text-white dark:bg-red-600'
+                                        : task.priority === 'medium'
+                                        ? 'bg-yellow-500 text-white dark:bg-yellow-600'
+                                        : 'bg-green-500 text-white dark:bg-green-600'
+                                }`}
+                            >
+                                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority
+                            </span>
+                            <span
+                                className={`px-2 py-1 text-sm font-medium rounded ${
+                                    task.status === 'completed'
+                                        ? 'bg-green-500 text-white dark:bg-green-600'
+                                        : task.status === 'due'
+                                        ? 'bg-yellow-500 text-white dark:bg-yellow-600'
+                                        : 'bg-red-500 text-white dark:bg-red-600'
+                                }`}
+                            >
+                                {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                            </span>
+                        </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -148,6 +205,13 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
                 task = {null}
                 onClose = { () => setAddingTask(false) }
                 onSave = {handleAddTask}
+                />
+          )}
+          {deleteTask && (
+            <ConfirmationModal
+                task = {deleteTask}
+                onConfirm = {handleDeleteTask}
+                onCancel = { () => setDeleteTask(null)}
                 />
           )}
         </div>
