@@ -23,9 +23,20 @@ public class TaskService {
         return repository.findAll();
     }
 
-    public Page<Task> fetchTasksBasedOnStatus(int page, int size){
+    public Page<Task> fetchTasksBasedOnStatus(int page, int size, List<String> status){
         Pageable pageable = PageRequest.of(page,size);
-        return repository.findByStatusIn(List.of("due","overdue"),pageable);
+        return repository.findByStatusIn(status,pageable);
+    }
+
+    public Page<Task> fetchTasksBasedOnPriority(int page, int size, String priority){
+        Pageable pageable = PageRequest.of(page,size);
+        return repository.findByPriority(priority,pageable);
+    }
+
+
+    public Page<Task> fetchAllTasks(int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return repository.findAll(pageable);
     }
 
     public long fetchCount() {

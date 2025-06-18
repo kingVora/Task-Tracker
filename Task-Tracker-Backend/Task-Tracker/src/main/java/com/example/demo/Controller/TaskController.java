@@ -23,7 +23,7 @@ public class TaskController {
         this.service = service;
     }
 
-    @GetMapping("/tasks")
+    @GetMapping("/tasksDashboard")
     public Page<Task> getTasks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size){
         List<Task> fetchedTasks = service.fetchTasks();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -50,7 +50,22 @@ public class TaskController {
                 throw new RuntimeException(e.getMessage());
             }
         });
-        return service.fetchTasksBasedOnStatus(page, size);
+        return service.fetchTasksBasedOnStatus(page, size,List.of("due","overdue"));
+    }
+
+    @GetMapping("/tasks")
+    public Page<Task> allTasks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size){
+        return service.fetchAllTasks(page,size);
+    }
+
+    @GetMapping("/fetchTasksBasedOnStatus")
+    public Page<Task> fetchTasksBasedOnStatus(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, @RequestParam String status){
+        return service.fetchTasksBasedOnStatus(page,size,List.of(status));
+    }
+
+    @GetMapping("/fetchTasksBasedOnPriority")
+    public Page<Task> fetchTasksBasedOnPriority(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, @RequestParam String priority){
+        return service.fetchTasksBasedOnPriority(page,size,priority);
     }
 
     @GetMapping("/totaltasks")
