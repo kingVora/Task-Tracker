@@ -7,7 +7,13 @@ import TaskModal from "./TaskModal";
 import AddTaskModel from "../../../Models/AddTaskModel";
 import ConfirmationModal from "./ConfirmationModal";
 
-export default function Tasks({onUpdate} : {onUpdate: () => void}) {
+interface TaskProps {
+    onUpdate: () => void;
+    tasksPerPageProp: number;
+    backendUrl : string;
+}
+
+export default function Tasks({onUpdate, tasksPerPageProp, backendUrl} : TaskProps) {
 
     const baseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -15,7 +21,7 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
     const [expandedTask,setExpandedTask] = useState<number|null>(null);
     const [updateTask,setUpdateTask] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [tasksPerPage] = useState(4);
+    const [tasksPerPage] = useState(tasksPerPageProp);
     const [totalPages, setTotalPages] = useState(0);
     const [tasksCountForPagination, setTasksCountForPagination] = useState(0);
     const [editingTask, setEditingTask] = useState<TaskModel | null>(null);
@@ -25,7 +31,8 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
     useEffect(() => {
         const fetchTasks = async() => {
             try{
-                const response = await axios.get(`${baseURL}/tasks?page=${currentPage-1}&size=${tasksPerPage}`);
+                console.log(`${baseURL}/${backendUrl}?page=${currentPage-1}&size=${tasksPerPage}`);
+                const response = await axios.get(`${baseURL}/${backendUrl}?page=${currentPage-1}&size=${tasksPerPage}`);
                 console.log("Tasks fetched:", response.data.content);
                 const dueTasks = response.data.content;
                 const sorted = dueTasks.sort((a: TaskModel,b: TaskModel) => priorityValue(a.priority) - priorityValue(b.priority));
@@ -38,7 +45,7 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
             }
         }
         fetchTasks();
-    },[currentPage, updateTask, addingTask]);
+    },[currentPage, updateTask, addingTask,backendUrl]);
 
     const priorityValue = (priority: string): number => {
         switch(priority) {
@@ -109,9 +116,6 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
 
     return (
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                Stay on Track! Here Are Your Due and Overdue Tasks
-            </h2>
             <div className="flex items-center justify-between mt-3">
                 {tasksCountForPagination > 0 && (
                     <div className="text-white">
@@ -156,8 +160,11 @@ export default function Tasks({onUpdate} : {onUpdate: () => void}) {
                   {expandedTask === task.taskId && (
                     <div className="flex justify-between items-center mt-2">
                         {/* Task Description */}
-                        <p className="text-gray-600">{task.description}</p>
-                
+                        <div>
+                            <p className="text-gray-600">{task.description}</p>
+                            <p className="text-gray-600">Assigned Date: {new Date(task.assignedDate).toISOString().split('T')[0]}</p>
+                            <p className="text-gray-600">Due Date: {new Date(task.dueDate).toISOString().split('T')[0]}</p>
+                        </div>
                         {/* Priority and Status */}
                         <div className="flex items-center gap-4">
                             {/* Priority Badge */}

@@ -23,12 +23,12 @@ public class TaskService {
         return repository.findAll();
     }
 
-    public Page<Task> fetchTasksBasedOnStatus(int page, int size, List<String> status){
+    public Page<Task> fetchTasksByStatus(int page, int size, List<String> status){
         Pageable pageable = PageRequest.of(page,size);
         return repository.findByStatusIn(status,pageable);
     }
 
-    public Page<Task> fetchTasksBasedOnPriority(int page, int size, String priority){
+    public Page<Task> fetchTasksByPriority(int page, int size, String priority){
         Pageable pageable = PageRequest.of(page,size);
         return repository.findByPriority(priority,pageable);
     }

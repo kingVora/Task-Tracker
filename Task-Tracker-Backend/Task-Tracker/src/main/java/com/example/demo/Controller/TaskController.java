@@ -50,7 +50,7 @@ public class TaskController {
                 throw new RuntimeException(e.getMessage());
             }
         });
-        return service.fetchTasksBasedOnStatus(page, size,List.of("due","overdue"));
+        return service.fetchTasksByStatus(page, size,List.of("due","overdue"));
     }
 
     @GetMapping("/tasks")
@@ -58,14 +58,14 @@ public class TaskController {
         return service.fetchAllTasks(page,size);
     }
 
-    @GetMapping("/fetchTasksBasedOnStatus")
-    public Page<Task> fetchTasksBasedOnStatus(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, @RequestParam String status){
-        return service.fetchTasksBasedOnStatus(page,size,List.of(status));
+    @GetMapping("/fetchTasksByStatus/{status}")
+    public Page<Task> fetchTasksBasedOnStatus(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, @PathVariable String status){
+        return service.fetchTasksByStatus(page,size,List.of(status));
     }
 
-    @GetMapping("/fetchTasksBasedOnPriority")
-    public Page<Task> fetchTasksBasedOnPriority(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, @RequestParam String priority){
-        return service.fetchTasksBasedOnPriority(page,size,priority);
+    @GetMapping("/fetchTasksByPriority/{priority}")
+    public Page<Task> fetchTasksBasedOnPriority(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size, @PathVariable String priority){
+        return service.fetchTasksByPriority(page,size,priority);
     }
 
     @GetMapping("/totaltasks")
