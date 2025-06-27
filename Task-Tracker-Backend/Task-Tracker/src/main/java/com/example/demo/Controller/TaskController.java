@@ -110,4 +110,9 @@ public class TaskController {
     public void deleteTask(@PathVariable int taskId){
         service.deleteTask(taskId);
     }
+
+    @GetMapping("/search/{title}")
+    public Page<Task> searchTask(@PathVariable String title){
+        return service.searchTask(title);
+    }
 }

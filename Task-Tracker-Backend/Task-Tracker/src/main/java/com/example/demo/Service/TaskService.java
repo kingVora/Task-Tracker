@@ -92,4 +92,9 @@ public class TaskService {
     public void deleteTask(int taskId) {
         repository.deleteById(taskId);
     }
+
+    public Page<Task> searchTask(String title) {
+        Pageable pageable = PageRequest.of(0,6);
+        return repository.findByTitleContainingIgnoreCase(title,pageable);
+    }
 }

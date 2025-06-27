@@ -14,4 +14,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     Page<Task> findByStatusIn(List<String> status, Pageable pageable);
 
     Page<Task> findByPriority(String priority, Pageable pageable);
+
+    Page<Task> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 }
